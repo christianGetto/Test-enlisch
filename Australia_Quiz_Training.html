@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Australia Quiz Training</title>
+<style>
+:root{
+ --bg:#07171d; --panel:#10262e; --panel2:#17343d; --text:#f6fbfc; --muted:#a9c1c8;
+ --easy:#53a765; --medium:#d59a2e; --hard:#d14a3b; --accent:#ff7a1a; --mint:#74f2ce;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:
+ radial-gradient(circle at 15% 8%,rgba(255,122,26,.2),transparent 25%),
+ radial-gradient(circle at 85% 12%,rgba(116,242,206,.12),transparent 25%),
+ linear-gradient(180deg,#0c2a35,var(--bg));color:var(--text)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.13;
+ background-image:radial-gradient(circle,#fff 1px,transparent 1px);background-size:30px 30px}
+.app{width:min(920px,100%);margin:0 auto;padding:14px}
+.card{background:linear-gradient(180deg,rgba(16,38,46,.97),rgba(7,23,29,.98));
+ border:1px solid rgba(255,255,255,.1);border-radius:28px;padding:22px;
+ box-shadow:0 24px 70px rgba(0,0,0,.34)}
+.hero{text-align:center;padding:30px 18px}
+.kicker{font-size:12px;font-weight:900;letter-spacing:.18em;color:var(--mint)}
+h1{font-size:clamp(40px,8vw,72px);line-height:.9;letter-spacing:-.05em;margin:12px 0}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);font-size:clamp(16px,3vw,21px);max-width:650px;margin:0 auto 22px}
+.oz{font-size:54px;letter-spacing:12px;margin:14px 0 22px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.2))}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:650px){.modes{grid-template-columns:1fr}}
+.mode{border:0;border-radius:22px;padding:20px 14px;color:#fff;font-weight:900;font-size:20px;
+ cursor:pointer;min-height:104px;text-align:left;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.mode small{display:block;font-size:13px;font-weight:700;opacity:.9;margin-top:6px}
+.mode.easy{background:linear-gradient(135deg,#3f8b51,var(--easy))}
+.mode.medium{background:linear-gradient(135deg,#aa7421,var(--medium))}
+.mode.hard{background:linear-gradient(135deg,#9e3028,var(--hard))}
+.mode:active{transform:scale(.98)}
+.hidden{display:none!important}
+.top{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.07);font-size:13px;font-weight:900}
+.pill.combo{color:#ffd580} .pill.score{color:var(--mint)}
+button{font:inherit}
+.ghost{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;
+ border-radius:14px;padding:11px 14px;font-weight:900;cursor:pointer}
+.quiz{min-height:460px}
+.level{display:inline-block;border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;letter-spacing:.1em}
+.level.easy{background:var(--easy)} .level.medium{background:var(--medium)} .level.hard{background:var(--hard)}
+.q{font-size:clamp(24px,4.5vw,38px);font-weight:900;line-height:1.1;margin:16px 0 20px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:620px){.answers{grid-template-columns:1fr}}
+.answer{border:1px solid rgba(255,255,255,.1);background:#193942;color:white;border-radius:17px;padding:16px;
+ font-size:18px;font-weight:800;text-align:left;cursor:pointer;min-height:64px}
+.answer.correct{background:#206b4c;border-color:var(--mint)} .answer.wrong{background:#792e28;border-color:#ff9389}
+.feedback{margin-top:16px;border-radius:18px;padding:16px;background:rgba(255,255,255,.06);font-size:18px;font-weight:900}
+.comboPop{font-size:28px;color:#ffd580;margin-top:4px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.primary{border:0;border-radius:16px;padding:14px 18px;background:linear-gradient(135deg,var(--accent),#ff3f2d);
+ color:#fff;font-weight:900;cursor:pointer}
+.summary{text-align:center;padding:20px}
+.big{font-size:clamp(46px,9vw,78px);font-weight:1000;line-height:.95;margin:10px 0}
+.bar{height:14px;background:rgba(255,255,255,.09);border-radius:999px;overflow:hidden;margin:16px 0}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--mint));width:0}
+.note{color:var(--muted);font-size:14px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<section id="home" class="card hero">
+ <div class="kicker">AUSTRALIA • CLASS TEST TRAINING</div>
+ <h1>QUIZ <span>ARCADE</span></h1>
+ <p class="sub">Choose your level. Collect points. Build a combo. Train until Australia has no secrets left.</p>
+ <div class="oz" aria-hidden="true">🦘 🐨 🌊 🪨</div>
+ <div class="modes">
+   <button class="mode easy" data-level="easy">EASY <small>1 point per correct answer</small></button>
+   <button class="mode medium" data-level="medium">MEDIUM <small>2 points per correct answer</small></button>
+   <button class="mode hard" data-level="hard">HARD <small>3 points per correct answer</small></button>
+ </div>
+ <p class="note">10 random questions per round • no repeats inside a round</p>
+</section>
+
+<section id="game" class="card hidden">
+ <div class="top">
+  <div class="stats">
+   <span id="round" class="pill">QUESTION 1 / 10</span>
+   <span id="score" class="pill score">SCORE 0</span>
+   <span id="combo" class="pill combo">COMBO ×0</span>
+  </div>
+  <button id="homeBtn" class="ghost" type="button">LEVELS</button>
+ </div>
+ <div class="quiz">
+  <span id="levelBadge" class="level easy">EASY</span>
+  <div id="question" class="q"></div>
+  <div id="answers" class="answers"></div>
+  <div id="feedback" class="feedback hidden"></div>
+  <div class="actions"><button id="nextBtn" class="primary hidden" type="button">NEXT QUESTION</button></div>
+ </div>
+</section>
+
+<section id="summary" class="card summary hidden">
+ <div class="kicker">ROUND COMPLETE</div>
+ <div id="summaryTitle" class="big">NICE!</div>
+ <p id="summaryText" class="sub"></p>
+ <div class="bar"><div id="fill" class="fill"></div></div>
+ <div class="stats" style="justify-content:center">
+  <span id="finalScore" class="pill score"></span>
+  <span id="bestCombo" class="pill combo"></span>
+ </div>
+ <div class="actions">
+  <button id="againBtn" class="primary" type="button">PLAY THIS LEVEL AGAIN</button>
+  <button id="levelsBtn" class="ghost" type="button">CHOOSE ANOTHER LEVEL</button>
+ </div>
+</section>
+</div>
+
+<script>
+const questions=[
+{l:"easy",q:"What is the capital of Australia?",a:["Sydney","Melbourne","Canberra","Perth"],c:2},
+{l:"easy",q:"What is Australia's biggest city according to the textbook?",a:["Brisbane","Sydney","Adelaide","Canberra"],c:1},
+{l:"easy",q:"What is another name for Australia?",a:["Kiwi","Downland","Oceania","Oz"],c:3},
+{l:"easy",q:"What is the famous building in Sydney called?",a:["Sydney Opera House","Parliament House","Sydney Palace","Royal Opera Hall"],c:0},
+{l:"easy",q:"What is the name of the famous bridge in Sydney?",a:["London Bridge","Harbour Tower Bridge","Sydney Harbour Bridge","Australian Bridge"],c:2},
+{l:"easy",q:"What is the famous large rock in central Australia called?",a:["Mount Everest","Uluru","Blue Mountain","Ayers Mountain"],c:1},
+{l:"easy",q:"What is the name of the famous coral reef near Australia?",a:["Pacific Coral Reef","Sydney Reef","Indian Ocean Reef","Great Barrier Reef"],c:3},
+{l:"easy",q:"What is the name of Australia's large island to the south?",a:["Tasmania","Fiji","New Zealand","Bali"],c:0},
+{l:"easy",q:"Which animal is famous for jumping and carrying its baby in a pouch?",a:["Koala","Emu","Kangaroo","Camel"],c:2},
+{l:"easy",q:"On which side of the road do Australians drive?",a:["On the right","On the left","In the middle","On both sides"],c:1},
+{l:"easy",q:"What is the dry, remote part of Australia called?",a:["The rainforest","The bush city","The coastline","The outback"],c:3},
+{l:"easy",q:"What season is it in Australia in December?",a:["Summer","Winter","Autumn","Spring"],c:0},
+{l:"easy",q:"Where do some Australians celebrate Christmas?",a:["In the snow","On frozen lakes","On the beach","In ski resorts"],c:2},
+{l:"easy",q:"Which ocean is west of Australia?",a:["Atlantic Ocean","Indian Ocean","Arctic Ocean","Southern Ocean"],c:1},
+{l:"easy",q:"What is the name of the famous highway through the Australian outback?",a:["Pacific Highway","Sydney Highway","Great Ocean Road","Stuart Highway"],c:3},
+{l:"easy",q:"What colours are on the Australian national flag?",a:["Blue, red and white","Green, yellow and white","Red, black and yellow","Blue, green and white"],c:0},
+{l:"easy",q:"Which sport is described as Australia's most popular sport in the textbook?",a:["Rugby Union","Horse racing","Australian Rules Football","Water polo"],c:2},
+{l:"easy",q:"Which animals were brought to Australia in the 1800s and now live in the outback?",a:["Elephants","Camels","Zebras","Llamas"],c:1},
+
+{l:"medium",q:"Why do many tourists visit Uluru in the morning or evening?",a:["Because animals sleep there","Because the rock disappears in the sunlight","Because tourists can climb it at these times","Because the rock changes colour"],c:3},
+{l:"medium",q:"Why is Uluru important to Aboriginal Australians?",a:["It is a sacred place","It is Australia's tallest mountain","It is the country's biggest city","It is a famous sports stadium"],c:0},
+{l:"medium",q:"What happened to climbing Uluru?",a:["It became free for everyone","It was only allowed in winter","It was banned","It became a national sport"],c:2},
+{l:"medium",q:"What does RFDS stand for?",a:["Regional Fire Department Service","Royal Flying Doctor Service","Remote Flight Delivery System","Royal Fire Defence Service"],c:1},
+{l:"medium",q:"Why is the Royal Flying Doctor Service important?",a:["It transports tourists to beaches","It delivers food to big cities","It teaches people how to fly","It provides medical help in remote areas"],c:3},
+{l:"medium",q:"What should you always take with you when travelling in the outback?",a:["Lots of water","A surfboard","A winter jacket","A bicycle"],c:0},
+{l:"medium",q:"What should you do if your car breaks down in the outback?",a:["Walk to the nearest town","Leave your car immediately","Stay with your car","Hide behind a tree"],c:2},
+{l:"medium",q:"What should you do if you get lost in the outback?",a:["Run as fast as possible","Find shade and call for help","Walk through the desert at midday","Use all your water immediately"],c:1},
+{l:"medium",q:"What should you do if a snake bites you?",a:["Try to catch the snake","Run to the nearest road","Wash the wound with hot water","Stay calm and still and get medical help"],c:3},
+{l:"medium",q:"Which dangerous sea animal is mentioned in the textbook?",a:["Box jellyfish","Sea turtle","Dolphin","Seahorse"],c:0},
+{l:"medium",q:"What do red and yellow flags at an Australian beach usually show?",a:["A dangerous fishing area","A beach that is closed","A supervised swimming area","A place where boats can park"],c:2},
+{l:"medium",q:"Why are there warning signs at Australian beaches?",a:["Because swimming is forbidden everywhere","Because of dangerous animals and sea conditions","Because beaches close every afternoon","Because tourists must pay to enter the water"],c:1},
+{l:"medium",q:"What is a bush fire?",a:["A fire in a city building","A fire on a ship","A fire in a factory","A fire that burns vegetation in the countryside"],c:3},
+{l:"medium",q:"Who helps fight bush fires in Australia?",a:["Firefighters and volunteers","Only police officers","Only professional pilots","Tourists and hotel workers"],c:0},
+{l:"medium",q:"Why are wild camels a problem for Australian farmers?",a:["They eat dangerous snakes","They scare tourists away from cities","They damage fences and destroy crops","They stop cars on motorways"],c:2},
+{l:"medium",q:"What is a didgeridoo?",a:["A traditional Australian dance","A traditional Aboriginal musical instrument","A type of Australian bird","A special kind of painting"],c:1},
+{l:"medium",q:"What is a boomerang?",a:["A traditional musical instrument","A traditional Australian hat","A type of Aboriginal painting","A traditional Aboriginal throwing tool"],c:3},
+
+{l:"hard",q:"According to the textbook, how long have Aboriginal Australians lived in Australia?",a:["Almost 50,000 years","About 5,000 years","About 500 years","Almost 200 years"],c:0},
+{l:"hard",q:"What happened when Europeans arrived in Australia in the 1700s?",a:["Aboriginal Australians immediately became European citizens","Europeans gave all their land to Aboriginal Australians","Aboriginal Australians lost land and faced violence and diseases","Aboriginal Australians moved voluntarily to Europe"],c:2},
+{l:"hard",q:"Why did many Aboriginal Australians die after Europeans arrived?",a:["Because Australia became too cold","Because of diseases, violence and loss of resources","Because they stopped hunting animals","Because they moved to large cities"],c:1},
+{l:"hard",q:"According to the textbook, what percentage of Australians were born outside Australia?",a:["5%","13%","50%","25%"],c:3},
+{l:"hard",q:"According to the textbook, what percentage of Australians were born in the UK?",a:["5%","15%","25%","35%"],c:0},
+{l:"hard",q:"Why did Niki Li decide to become an Australian citizen?",a:["She wanted to become a famous singer","She wanted to leave Australia immediately","She wanted to make her life in Australia","She wanted to work for the Flying Doctors"],c:2},
+{l:"hard",q:"What message does the Burdekin Crew want to give young people?",a:["Life in a small town is always boring","Be proud of who you are","Everyone should move to a big city","School is not important"],c:1},
+{l:"hard",q:"What are dot paintings?",a:["A special kind of Australian road sign","A traditional Australian sport","A way to write English words","A form of Aboriginal art"],c:3},
+{l:"hard",q:"Which statement about Aboriginal Australian culture is correct?",a:["Traditional stories, paintings and dances are important parts of the culture","Aboriginal Australians have no traditional musical instruments","Aboriginal culture only developed after Europeans arrived","Traditional Aboriginal art is only made with computers"],c:0},
+{l:"hard",q:"Which statement about Australian Rules Football is correct?",a:["Players are not allowed to touch the ball with their hands","It is played on ice","Players can kick the ball and tackle each other","It is exactly the same as Rugby Union"],c:2},
+{l:"hard",q:"What is the Melbourne Cup?",a:["A famous swimming competition","A famous horse race","A national football championship","A surfing competition"],c:1},
+{l:"hard",q:"Why is the Melbourne Cup called 'the race that stops a nation'?",a:["Because all Australian roads are closed","Because it lasts for an entire week","Because nobody is allowed to work that day","Because many Australians stop what they are doing to watch it"],c:3},
+{l:"hard",q:"Which statement about Australian Rules Football is correct?",a:["It combines elements of different sports and allows physical contact","It is played with a tennis ball","Only five players are allowed on the field","Players are not allowed to run with the ball"],c:0},
+{l:"hard",q:"Why do some children in remote parts of Australia study at home?",a:["Because schools are forbidden in the outback","Because they do not want to learn with other children","Because the nearest school can be hundreds of kilometres away","Because Australian children only study online"],c:2},
+{l:"hard",q:"Why is the Australian sun especially dangerous?",a:["Because Australia has no clouds","Because strong UV radiation can damage the skin and cause skin cancer","Because the sun shines for 24 hours every day","Because the air is always hotter than 50°C"],c:1}
+];
+
+const home=document.getElementById("home"), game=document.getElementById("game"), summary=document.getElementById("summary");
+const roundEl=document.getElementById("round"), scoreEl=document.getElementById("score"), comboEl=document.getElementById("combo");
+const levelBadge=document.getElementById("levelBadge"), qEl=document.getElementById("question"), answers=document.getElementById("answers");
+const feedback=document.getElementById("feedback"), nextBtn=document.getElementById("nextBtn");
+const finalScore=document.getElementById("finalScore"), bestComboEl=document.getElementById("bestCombo"), fill=document.getElementById("fill");
+const summaryTitle=document.getElementById("summaryTitle"), summaryText=document.getElementById("summaryText");
+
+let level="easy", pool=[], index=0, score=0, combo=0, bestCombo=0, correctCount=0, locked=false;
+
+function shuffle(a){
+ a=[...a];
+ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+ return a;
+}
+function pointsFor(l){return l==="easy"?1:l==="medium"?2:3}
+function startLevel(l){
+ level=l; index=0; score=0; combo=0; bestCombo=0; correctCount=0;
+ pool=shuffle(questions.filter(q=>q.l===level)).slice(0,10);
+ home.classList.add("hidden"); summary.classList.add("hidden"); game.classList.remove("hidden");
+ showQuestion();
+}
+function showQuestion(){
+ locked=false; feedback.classList.add("hidden"); nextBtn.classList.add("hidden");
+ const q=pool[index];
+ roundEl.textContent=`QUESTION ${index+1} / ${pool.length}`;
+ scoreEl.textContent=`SCORE ${score}`; comboEl.textContent=`COMBO ×${combo}`;
+ levelBadge.textContent=level.toUpperCase(); levelBadge.className=`level ${level}`;
+ qEl.textContent=q.q; answers.innerHTML="";
+ q.a.forEach((txt,i)=>{
+   const b=document.createElement("button"); b.type="button"; b.className="answer";
+   b.textContent=`${String.fromCharCode(65+i)}) ${txt}`;
+   b.addEventListener("click",()=>choose(i,b,q)); answers.appendChild(b);
+ });
+}
+function choose(i,b,q){
+ if(locked)return; locked=true;
+ const ok=i===q.c;
+ [...answers.children].forEach((x,idx)=>{x.disabled=true;if(idx===q.c)x.classList.add("correct")});
+ if(ok){
+   b.classList.add("correct"); correctCount++; combo++; bestCombo=Math.max(bestCombo,combo);
+   const base=pointsFor(level); const bonus=combo>=3?1:0; score+=base+bonus;
+   feedback.innerHTML=`✅ CORRECT! +${base} point${base>1?"s":""}${bonus?` +1 combo bonus 🔥`:""}${combo>=3?`<div class="comboPop">${combo}× COMBO!</div>`:""}`;
+ } else {
+   b.classList.add("wrong"); combo=0;
+   feedback.innerHTML=`❌ NOT THIS TIME.<br><span style="font-weight:700;color:#a9c1c8">Correct answer: ${String.fromCharCode(65+q.c)}) ${q.a[q.c]}</span>`;
+ }
+ scoreEl.textContent=`SCORE ${score}`; comboEl.textContent=`COMBO ×${combo}`;
+ feedback.classList.remove("hidden"); nextBtn.classList.remove("hidden");
+}
+function finish(){
+ game.classList.add("hidden"); summary.classList.remove("hidden");
+ const pct=Math.round(correctCount/pool.length*100);
+ finalScore.textContent=`SCORE ${score}`; bestComboEl.textContent=`BEST COMBO ×${bestCombo}`;
+ fill.style.width=pct+"%";
+ if(pct>=90)summaryTitle.textContent="OUTBACK LEGEND!";
+ else if(pct>=70)summaryTitle.textContent="GREAT RUN!";
+ else if(pct>=50)summaryTitle.textContent="KEEP GOING!";
+ else summaryTitle.textContent="ONE MORE ROUND!";
+ summaryText.textContent=`You got ${correctCount} of ${pool.length} questions right on ${level.toUpperCase()}.`;
+}
+nextBtn.addEventListener("click",()=>{index++; if(index>=pool.length)finish(); else showQuestion();});
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>startLevel(b.dataset.level)));
+document.getElementById("homeBtn").addEventListener("click",()=>{game.classList.add("hidden");home.classList.remove("hidden")});
+document.getElementById("levelsBtn").addEventListener("click",()=>{summary.classList.add("hidden");home.classList.remove("hidden")});
+document.getElementById("againBtn").addEventListener("click",()=>startLevel(level));
+</script>
+</body>
+</html>
